@@ -34,6 +34,7 @@ AI-Tester is a powerful CLI tool that leverages **Groq’s ultra-fast inference 
 git clone https://github.com/AreenHUB/ai-tester.git
 cd ai-tester
 pip install -r requirements.txt
+pip install -e .
 ```
 
 ---
