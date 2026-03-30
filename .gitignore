@@ -1,0 +1,16 @@
+# Environments
+venv/
+env/
+.env
+
+# Cache and testing
+__pycache__/
+.pytest_cache/
+tests_generated_by_ai/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
