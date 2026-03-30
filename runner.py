@@ -10,7 +10,7 @@ console = Console()
 class TestRunner:
     def __init__(self, ai_engine: AIEngine, target_project_path: Path):
         self.ai_engine = ai_engine
-        # المجلد سيُنشأ في المشروع المستهدف
+       
         self.tests_dir = target_project_path / "tests_generated_by_ai"
         self.tests_dir.mkdir(exist_ok=True)
 
@@ -20,7 +20,7 @@ class TestRunner:
 
         self._save_test(test_filename, test_code)
 
-        # تشغيل الـ pytest داخل مسار المشروع المستهدف
+       
         success, error_output = self._run_pytest(test_filename)
         if success:
             console.print(f"[green]✓ PASS: {file_info['name']}[/green]")
@@ -31,7 +31,7 @@ class TestRunner:
             )
             fixed_code = self.ai_engine.fix_test_code(test_code, error_output)
             self._save_test(test_filename, fixed_code)
-            # محاولة أخيرة
+           
             success, _ = self._run_pytest(test_filename)
             return success
 
