@@ -10,9 +10,17 @@ class ProjectScanner:
     def get_target_files(self):
         target_files = []
         for root, dirs, files in os.walk(self.project_path):
+            
             if any(
-                exclude in root
-                for exclude in ["venv", ".git", "__pycache__", "generated_tests"]
+                part
+                in [
+                    ".git",
+                    "venv",
+                    "__pycache__",
+                    "tests_generated_by_ai",
+                    "tests_generated",
+                ]
+                for part in Path(root).parts
             ):
                 continue
 
@@ -24,23 +32,32 @@ class ProjectScanner:
                 ):
                     file_path = Path(root) / file
 
-                    # السحر هنا: استخراج مسار الاستيراد الصحيح للمشروع
-                    # مثلا: تحويل "app/core/security.py" إلى "app.core.security"
-                    relative_path = file_path.relative_to(self.project_path)
-                    module_import_path = str(relative_path.with_suffix("")).replace(
-                        os.sep, "."
-                    )
+                    try:
+                        with open(file_path, "r", encoding="utf-8") as f:
+                            content = f.read().strip()
 
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        content = f.read().strip()
+                        if len(content) > 10:
+                            
+                            try:
+                                relative_path = file_path.relative_to(self.project_path)
+                                module_import_path = (
+                                    str(relative_path)
+                                    .replace(os.sep, ".")
+                                    .replace(".py", "")
+                                )
+                            except ValueError:
+                                module_import_path = (
+                                    file_path.stem
+                                )  
 
-                    if content:
-                        target_files.append(
-                            {
-                                "name": file_path.name,
-                                "path": str(file_path),
-                                "module_path": module_import_path,  # أضفنا هذا المفتاح الجديد
-                                "content": content,
-                            }
-                        )
+                            target_files.append(
+                                {
+                                    "name": file_path.name,
+                                    "path": str(file_path),
+                                    "module_path": module_import_path,
+                                    "content": content,
+                                }
+                            )
+                    except Exception as e:
+                        continue
         return target_files
